@@ -32,7 +32,7 @@ Download the package for your platform from [Releases](https://github.com/gizmod
 | Platform | Package |
 |---|---|
 | Windows x64 | `Hardcharger-ODBC-Driver-x64.msi` (recommended), signed DLL and ZIP |
-| macOS Apple Silicon | `hardcharger-odbc-macos-arm64.tar.gz` |
+| macOS 15+ (Apple Silicon) | `hardcharger-odbc-macos-arm64.tar.gz` |
 | Linux x64 | `hardcharger-odbc-linux-amd64.tar.gz` |
 | Linux ARM64 | `hardcharger-odbc-linux-arm64.tar.gz` |
 
@@ -41,7 +41,13 @@ RFC 3161 timestamp. Both DLL and MSI signatures must pass Windows Authenticode a
 `signtool verify /pa` checks before publication. The MSI installs and registers
 **Hardcharger ODBC Driver** alongside any GizmoSQL driver.
 
-On macOS, install `unixodbc` (`brew install unixodbc`). On Linux, use glibc 2.39 or later (Ubuntu 24.04 or equivalent) and install your
+On macOS 15+ (Apple Silicon), Homebrew installs and registers the driver:
+
+```sh
+brew install gizmodata/tap/hardcharger-odbc
+```
+
+For an archive installation on macOS 15+, install `unixodbc` (`brew install unixodbc`). On Linux, use glibc 2.39 or later (Ubuntu 24.04 or equivalent) and install your
 distribution's `unixodbc` package. Extract the archive to a permanent location:
 
 ```sh

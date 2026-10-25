@@ -8,6 +8,7 @@ The first published release. The v1.0.0 candidate was stopped by its signing gat
 
 - Initialize the pinned generic core in the Windows signing job so the shared scripts and live suites are available.
 - Pin signing automation separately from the released core implementation.
+- Publish the verified Homebrew formula and document macOS 15+ and Linux glibc 2.39+ requirements.
 
 - Thin wrapper around the released generic Warp SQL ODBC driver; add hardcharger:// URIs, port 31337, branding and query/session settings.
 
