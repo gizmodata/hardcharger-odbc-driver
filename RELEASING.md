@@ -27,4 +27,4 @@ with `python third_party/warp-sql-odbc/scripts/homebrew-formula.py --product har
 package checksums. Manual CI runs can select Unix or Windows to reproduce a platform
 failure; published releases always require every platform and signing gate.
 
-Shared release/signing automation comes from the pinned Warp SQL ODBC workflow. Keep its workflow commit and the submodule commit identical. The wrapper must compile the released core and run both the shared and wrapper suites.
+Shared release/signing automation comes from the pinned Warp SQL ODBC workflow. Pin the workflow and implementation independently to immutable commits. The implementation must be a published core release; an automation-only fix may use a newer workflow commit. The wrapper must compile the released core and run both the shared and wrapper suites.

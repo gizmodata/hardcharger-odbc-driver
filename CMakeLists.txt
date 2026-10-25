@@ -1,6 +1,6 @@
 # Copyright (C) 2026 GizmoData LLC. Apache-2.0.
 cmake_minimum_required(VERSION 3.28)
-project(hardcharger_odbc VERSION 1.0.0 LANGUAGES C CXX)
+project(hardcharger_odbc VERSION 1.0.1 LANGUAGES C CXX)
 enable_testing()
 set(WARP_ODBC_PRODUCT_VERSION ${PROJECT_VERSION})
 set(WARP_ODBC_LIBRARY_NAME hardcharger-odbc)

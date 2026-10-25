@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
-## [1.0.0] - 2026-10-25
+## [1.0.1] - 2026-10-25
+
+The first published release. The v1.0.0 candidate was stopped by its signing gate before publication.
+
+- Initialize the pinned generic core in the Windows signing job so the shared scripts and live suites are available.
+- Pin signing automation separately from the released core implementation.
 
 - Thin wrapper around the released generic Warp SQL ODBC driver; add hardcharger:// URIs, port 31337, branding and query/session settings.
 
@@ -34,4 +39,4 @@
 - UTF-16 conversion now handles supplementary characters such as emoji in parameters and results.
 
 The ODBC compatibility layer is derived from GizmoSQL ODBC 1.1.3. Its history and attribution
-are retained in Git and NOTICE; the Hardcharger release line starts at 1.0.0.
+are retained in Git and NOTICE; the Hardcharger first published release is 1.0.1.
