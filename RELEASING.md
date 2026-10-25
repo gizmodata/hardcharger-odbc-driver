@@ -22,7 +22,7 @@ DLL and its Microsoft C++ runtime dependencies. Unix packages contain the tested
 Every release includes SHA256SUMS and GitHub build-provenance attestations.
 
 To refresh Homebrew after publishing, download SHA256SUMS and generate the tap formula
-with `python third_party/warp-sql-odbc/scripts/homebrew-formula.py X.Y.Z /path/to/SHA256SUMS`. Commit it as
+with `python third_party/warp-sql-odbc/scripts/homebrew-formula.py --product hardcharger X.Y.Z /path/to/SHA256SUMS`. Commit it as
 `Formula/hardcharger-odbc.rb` in gizmodata/homebrew-tap after verifying the downloaded
 package checksums. Manual CI runs can select Unix or Windows to reproduce a platform
 failure; published releases always require every platform and signing gate.

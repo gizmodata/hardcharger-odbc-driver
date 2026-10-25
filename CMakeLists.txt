@@ -2,6 +2,7 @@
 cmake_minimum_required(VERSION 3.28)
 project(hardcharger_odbc VERSION 1.0.0 LANGUAGES C CXX)
 enable_testing()
+set(WARP_ODBC_PRODUCT_VERSION ${PROJECT_VERSION})
 set(WARP_ODBC_LIBRARY_NAME hardcharger-odbc)
 set(WARP_ODBC_PRODUCT_NAME "Hardcharger ODBC Driver")
 set(WARP_ODBC_PROFILE_SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/hardcharger_profile.cc)

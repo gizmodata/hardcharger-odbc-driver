@@ -17,7 +17,7 @@ permissions:
   attestations: write
 jobs:
   driver:
-    uses: gizmodata/warp-sql-odbc/.github/workflows/ci.yml@acde30bda9f9ab641c4aaa39ea44b586a07e99a8
+    uses: gizmodata/warp-sql-odbc/.github/workflows/ci.yml@587e26f4ffeefd65d3c327f4aea24ce272846266
     with:
       platforms: ${{ inputs.platforms || 'all' }}
       source-root: third_party/warp-sql-odbc
