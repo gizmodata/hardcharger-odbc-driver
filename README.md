@@ -20,8 +20,9 @@ GizmoData™'s DuckDB 2.0 server. Uses the native Warp SQL C++ client over HTTP/
 with Apache Arrow IPC streaming. There is no Flight SQL, gRPC or protobuf transport.
 
 Based on the [GizmoSQL ODBC driver's](https://github.com/gizmodata/gizmosql-odbc-driver)
-ODBC compatibility layer, retaining its accessor, conversion, metadata, parameter and
-transaction regression suites. It adds native Warp SQL sessions, prepared statements,
+ODBC compatibility layer through the generic [Warp SQL ODBC driver](https://github.com/gizmodata/warp-sql-odbc). This repository is a thin wrapper: it adds `hardcharger://` URI translation,
+Hardcharger branding and query/session settings. The shared driver owns the transport, ODBC
+implementation and regression suites. It adds native Warp SQL sessions, prepared statements,
 password/token/browser/certificate sign-in, cancellation and statement timeouts.
 
 ## Install
@@ -81,8 +82,8 @@ TLS is on by default. For a local server without TLS, explicitly set
 import pyodbc
 
 with pyodbc.connect(
-    "Driver={Hardcharger ODBC Driver};host=localhost;port=31337;"
-    "uid=hardcharger;pwd=change-me;useEncryption=false;",
+    "Driver={Hardcharger ODBC Driver};uri=hardcharger://localhost?tls=false;"
+    "uid=hardcharger;pwd=change-me;",
     autocommit=True,
 ) as connection:
     row = connection.execute("SELECT CAST(? AS VARCHAR) AS greeting, 42 AS answer", "hello").fetchone()
@@ -97,10 +98,17 @@ and primary/imported/exported key metadata.
 
 ## Connection options
 
+`hardcharger://host` uses verified TLS and port 31337. Add `?tls=false` for plain HTTP.
+`hardcharger://host:port/custom/warp` selects a custom protocol mount. Generic `warp://`,
+`https://` and `http://` URIs retain the Warp SQL driver's port defaults (443/80).
+Credentials belong in ODBC properties. Explicit properties override URI values.
+`hardcharger+http://` is refused; use `hardcharger://...?tls=false`.
+
 Property names are case insensitive.
 
 | Property | Default | Meaning |
 |---|---|---|
+| `uri` | | `hardcharger://host[:port]`, `warp://`, `https://` or `http://` URI |
 | `host` | `localhost` | Server DNS name or IP address |
 | `port` | `31337` | Warp SQL port |
 | `uid` / `user` / `user id` | | Username |
@@ -142,13 +150,13 @@ Tests require a real server; missing binaries or failed live suites fail the bui
 ```sh
 git clone --recurse-submodules https://github.com/gizmodata/hardcharger-odbc-driver.git
 cd hardcharger-odbc-driver
-python scripts/build-arrow.py --prefix .deps/install
-python scripts/build-boost.py --prefix .deps/install
+python third_party/warp-sql-odbc/scripts/build-arrow.py --prefix .deps/install
+python third_party/warp-sql-odbc/scripts/build-boost.py --prefix .deps/install
 cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$PWD/.deps/install"
 cmake --build build --parallel 3
 ctest --test-dir build --output-on-failure
 python -m pip install pyodbc requests
-python scripts/test-live.py --server /path/to/hardcharger-server --driver build/Release/lib/libhardcharger-odbc.so
+python third_party/warp-sql-odbc/scripts/test-live.py --server /path/to/hardcharger-server --driver build/Release/lib/libhardcharger-odbc.so --driver-name "Hardcharger ODBC Driver" --extra-suite integration_tests/test_hardcharger.py
 ```
 
 ## License and attribution

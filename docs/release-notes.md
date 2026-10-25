@@ -1,4 +1,4 @@
-The first **Hardcharger™ ODBC driver**, using native **Warp SQL over HTTP/HTTPS** and
+The first **Hardcharger™ ODBC driver**, a thin wrapper of the generic [Warp SQL ODBC driver](https://github.com/gizmodata/warp-sql-odbc). Adds **hardcharger://** URIs (port 31337) and Hardcharger branding/settings, using **Warp SQL over HTTP/HTTPS** and
 Apache Arrow IPC streaming. Based on the GizmoSQL driver's ODBC compatibility layer,
 with its conversion, metadata, parameter and transaction suites retained for Hardcharger.
 

@@ -4,6 +4,8 @@
 
 ## [1.0.0] - 2026-10-25
 
+- Thin wrapper around the released generic Warp SQL ODBC driver; add hardcharger:// URIs, port 31337, branding and query/session settings.
+
 ### Added
 - Initial Hardcharger ODBC driver with native Warp SQL over HTTP/HTTPS and Arrow IPC streaming.
 - Windows x64 signed DLL and MSI, macOS arm64 and Linux amd64/arm64 libraries.

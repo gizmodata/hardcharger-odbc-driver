@@ -1,6 +1,6 @@
 # Releasing
 
-1. Update `project(... VERSION ...)` in CMakeLists.txt, CHANGELOG.md and the expected
+1. Publish and verify the pinned generic Warp SQL ODBC release first. Then update `project(... VERSION ...)` in CMakeLists.txt, CHANGELOG.md and the expected
    driver version in the regression suite. DLL resource and MSI versions derive from CMake.
 2. Run unit and live suites locally. Push main and require all four platform builds/tests green.
 3. Tag that tested commit `vX.Y.Z` and push the tag. The workflow repeats every gate on
@@ -22,7 +22,9 @@ DLL and its Microsoft C++ runtime dependencies. Unix packages contain the tested
 Every release includes SHA256SUMS and GitHub build-provenance attestations.
 
 To refresh Homebrew after publishing, download SHA256SUMS and generate the tap formula
-with `python scripts/homebrew-formula.py X.Y.Z /path/to/SHA256SUMS`. Commit it as
+with `python third_party/warp-sql-odbc/scripts/homebrew-formula.py X.Y.Z /path/to/SHA256SUMS`. Commit it as
 `Formula/hardcharger-odbc.rb` in gizmodata/homebrew-tap after verifying the downloaded
 package checksums. Manual CI runs can select Unix or Windows to reproduce a platform
 failure; published releases always require every platform and signing gate.
+
+Shared release/signing automation comes from the pinned Warp SQL ODBC workflow. Keep its workflow commit and the submodule commit identical. The wrapper must compile the released core and run both the shared and wrapper suites.

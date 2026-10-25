@@ -1,11 +1,8 @@
-# Hardcharger ODBC driver
+# Hardcharger ODBC wrapper
 
-Native Warp SQL C++ client (`third_party/warp-sql`, pinned), Arrow IPC + compute,
-and the GizmoSQL ODBC driver's compatibility layer. No Flight SQL/gRPC transport.
-See docs/BUILDING.md, README.md and RELEASING.md for the supported build/test/release flow.
-
-Always preserve and run the inherited GoogleTest and C/pyodbc live suites. Add meaningful
-regressions for changes. Live tests require a real Hardcharger binary and must fail rather
-than skip missing coverage. Update CHANGELOG.md with behavior changes. Preserve upstream
-licenses and attribution. Release Windows DLLs and MSIs must use GizmoData's existing
-certificate and pass the signature checks; no unsigned release fallback.
+Keep this repository thin. ODBC implementation, Warp SQL transport, common suites and
+release automation belong in the pinned third_party/warp-sql-odbc repository. This
+wrapper owns Hardcharger URI translation, branding, session initialization and tests.
+Always run the shared suites and wrapper suites. Do not publish Windows DLLs/MSIs
+without the existing GizmoData EV signature, timestamp and installed-driver live tests.
+Publish the generic core release before the corresponding product wrapper release.
