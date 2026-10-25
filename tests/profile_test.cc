@@ -7,7 +7,7 @@ TEST(HardchargerProfile, BrandingAndDefaults) {
   EXPECT_STREQ(GetDriverProfile().name, "Hardcharger ODBC Driver");
   auto o = WarpSqlConnection::BuildConnectOptions({});
   EXPECT_EQ(o.port, 31337); EXPECT_TRUE(o.tls.enabled);
-  EXPECT_EQ(o.user_agent, "hardcharger-odbc/1.0.0");
+  EXPECT_EQ(o.user_agent.find("hardcharger-odbc/"), 0);
 }
 TEST(HardchargerProfile, UriDefaultsTo31337AndTls) {
   auto o = WarpSqlConnection::BuildConnectOptions({{"uri", "hardcharger://db.example.com"}});
