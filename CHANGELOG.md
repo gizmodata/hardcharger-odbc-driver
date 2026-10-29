@@ -12,6 +12,12 @@
 - A `chargewire://` URI is now the generic alternative to `hardcharger://`, and the
   default `basePath` is `/chargewire`.
 
+### Fixed
+
+- pyodbc `fast_executemany` no longer crashes the process, and a column-wise parameter
+  array inserts every row instead of only the first (the shared driver's parameter-array
+  fix).
+
 ## [1.0.1] - 2026-10-25
 
 The first published release. The v1.0.0 candidate was stopped by its signing gate before publication.

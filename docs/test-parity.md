@@ -1,7 +1,7 @@
 # Regression coverage
 
 This wrapper pins the generic Chargewire ODBC driver and compiles its entire implementation
-and 193 unit cases, plus six Hardcharger URI/branding cases (199 total). The GizmoSQL
+and 203 unit cases, plus six Hardcharger URI/branding cases (209 total). The GizmoSQL
 baseline has 174. See the [shared coverage report](../third_party/chargewire-odbc/docs/test-parity.md).
 
 The same inherited 15 C metadata/key/parameter, 9 C transaction and 6 pyodbc cases run
