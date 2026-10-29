@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+### Changed
+
+- The driver now uses the Chargewire protocol and the Chargewire ODBC driver and client
+  library. Its registered name, library name, `hardcharger://` URIs and DSNs are
+  unchanged, and connection URIs and mount paths written for 1.0 keep working. It still
+  works with Hardcharger servers released before the rename: on its first request it
+  finds out which spelling of the protocol the server speaks and uses that one.
+- A `chargewire://` URI is now the generic alternative to `hardcharger://`, and the
+  default `basePath` is `/chargewire`.
+
 ## [1.0.1] - 2026-10-25
 
 The first published release. The v1.0.0 candidate was stopped by its signing gate before publication.

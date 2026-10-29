@@ -12,6 +12,7 @@ TEST(HardchargerProfile, BrandingAndDefaults) {
 TEST(HardchargerProfile, UriDefaultsTo31337AndTls) {
   auto o = ChargewireConnection::BuildConnectOptions({{"uri", "hardcharger://db.example.com"}});
   EXPECT_EQ(o.host, "db.example.com"); EXPECT_EQ(o.port, 31337); EXPECT_TRUE(o.tls.enabled);
+  EXPECT_EQ(o.base_path, "/chargewire");
 }
 TEST(HardchargerProfile, PlainUriKeepsHardchargerPort) {
   auto o = ChargewireConnection::BuildConnectOptions({{"uri", "hardcharger://localhost?tls=false"}});

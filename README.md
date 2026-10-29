@@ -67,6 +67,13 @@ Use `libhardcharger-odbc.so` on Linux. The native Arrow, Chargewire, Boost and O
 libraries are linked statically in release builds; unixODBC's installer library and
 the platform's C/C++ runtime remain system dependencies.
 
+### Upgrading from 1.0
+
+The driver now uses Chargewire, the protocol's new name. It still registers as
+**Hardcharger ODBC Driver** with the same library name, so existing DSNs and connection
+strings need no change, and connection URIs and mount paths written for 1.0 keep working.
+It also connects to Hardcharger servers released before the rename.
+
 Add a DSN to `~/.odbc.ini` (Windows: use ODBC Data Sources, 64-bit):
 
 ```ini
