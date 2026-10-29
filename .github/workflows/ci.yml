@@ -17,10 +17,10 @@ permissions:
   attestations: write
 jobs:
   driver:
-    uses: gizmodata/warp-sql-odbc/.github/workflows/ci.yml@1406f094df3b7c0b4dc63915be78b6712ba8b729
+    uses: gizmodata/chargewire-odbc/.github/workflows/ci.yml@1406f094df3b7c0b4dc63915be78b6712ba8b729
     with:
       platforms: ${{ inputs.platforms || 'all' }}
-      source-root: third_party/warp-sql-odbc
+      source-root: third_party/chargewire-odbc
       library-name: hardcharger-odbc
       driver-name: Hardcharger ODBC Driver
       msi-name: Hardcharger-ODBC-Driver-x64.msi

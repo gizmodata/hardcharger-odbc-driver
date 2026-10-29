@@ -3,10 +3,10 @@
 #include <boost/url.hpp>
 #include <boost/algorithm/string.hpp>
 
-namespace driver::warpsql_odbc {
+namespace driver::chargewire_odbc {
 const DriverProfile& GetDriverProfile() {
   static const DriverProfile profile{"Hardcharger ODBC Driver", "Hardcharger",
-      "hardcharger-odbc/" WARP_ODBC_VERSION, "hardcharger-odbc.ini", 31337};
+      "hardcharger-odbc/" CHARGEWIRE_ODBC_VERSION, "hardcharger-odbc.ini", 31337};
   return profile;
 }
 std::string TranslateProductUri(const std::string& raw) {
@@ -17,11 +17,11 @@ std::string TranslateProductUri(const std::string& raw) {
     throw odbcabstraction::DriverException("Use hardcharger://host?tls=false for plain HTTP", "08001");
   if (scheme != "hardcharger") return raw;
   boost::urls::url uri(*parsed);
-  uri.set_scheme("warp");
+  uri.set_scheme("chargewire");
   if (!uri.has_port()) uri.set_port("31337");
   return uri.buffer();
 }
-void InitializeProductSession(WarpSqlClient& client, const ConnectionProperties& properties,
+void InitializeProductSession(ChargewireClient& client, const ConnectionProperties& properties,
                               const CallOptions& options) {
   for (const auto& [property, setting] : {std::pair{"queryTag", "hardcharger.query_tag"},
                                        std::pair{"sessionTag", "hardcharger.session_tag"}}) {

@@ -5,7 +5,7 @@ import sys
 import time
 import unittest
 sys.path.insert(0, os.path.join(os.environ['ODBC_SUITE_ROOT'], 'integration_tests'))
-from test_warp import AUTH, BASE, CA, DRIVER, HOST, PORT, TLS, connect, pyodbc
+from test_chargewire import AUTH, BASE, CA, DRIVER, HOST, PORT, TLS, connect, pyodbc
 
 class HardchargerTests(unittest.TestCase):
     def test_hardcharger_uri(self):

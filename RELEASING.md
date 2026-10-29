@@ -1,6 +1,6 @@
 # Releasing
 
-1. Publish and verify the pinned generic Warp SQL ODBC release first. Then update `project(... VERSION ...)` in CMakeLists.txt, CHANGELOG.md and the expected
+1. Publish and verify the pinned generic Chargewire ODBC release first. Then update `project(... VERSION ...)` in CMakeLists.txt, CHANGELOG.md and the expected
    driver version in the regression suite. DLL resource and MSI versions derive from CMake.
 2. Run unit and live suites locally. Push main and require all four platform builds/tests green.
 3. Tag that tested commit `vX.Y.Z` and push the tag. The workflow repeats every gate on
@@ -22,9 +22,9 @@ DLL and its Microsoft C++ runtime dependencies. Unix packages contain the tested
 Every release includes SHA256SUMS and GitHub build-provenance attestations.
 
 To refresh Homebrew after publishing, download SHA256SUMS and generate the tap formula
-with `python /path/to/warp-sql-odbc/scripts/homebrew-formula.py --product hardcharger X.Y.Z /path/to/SHA256SUMS`. Use the reviewed generic automation checkout: packaging helpers may advance independently of the pinned binary core. Commit it as
+with `python /path/to/chargewire-odbc/scripts/homebrew-formula.py --product hardcharger X.Y.Z /path/to/SHA256SUMS`. Use the reviewed generic automation checkout: packaging helpers may advance independently of the pinned binary core. Commit it as
 `Formula/hardcharger-odbc.rb` in gizmodata/homebrew-tap after verifying the downloaded
 package checksums. Manual CI runs can select Unix or Windows to reproduce a platform
 failure; published releases always require every platform and signing gate.
 
-Shared release/signing automation comes from the pinned Warp SQL ODBC workflow. Pin the workflow and implementation independently to immutable commits. The implementation must be a published core release; an automation-only fix may use a newer workflow commit. The wrapper must compile the released core and run both the shared and wrapper suites.
+Shared release/signing automation comes from the pinned Chargewire ODBC workflow. Pin the workflow and implementation independently to immutable commits. The implementation must be a published core release; an automation-only fix may use a newer workflow commit. The wrapper must compile the released core and run both the shared and wrapper suites.

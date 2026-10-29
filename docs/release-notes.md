@@ -1,4 +1,4 @@
-The first **Hardcharger™ ODBC driver**, a thin wrapper of the generic [Warp SQL ODBC driver](https://github.com/gizmodata/warp-sql-odbc). Adds **hardcharger://** URIs (port 31337) and Hardcharger branding/settings, using **Warp SQL over HTTP/HTTPS** and
+The first **Hardcharger™ ODBC driver**, a thin wrapper of the generic [Chargewire ODBC driver](https://github.com/gizmodata/chargewire-odbc). Adds **hardcharger://** URIs (port 31337) and Hardcharger branding/settings, using **Chargewire over HTTP/HTTPS** and
 Apache Arrow IPC streaming. Based on the GizmoSQL driver's ODBC compatibility layer,
 with its conversion, metadata, parameter and transaction suites retained for Hardcharger.
 
@@ -9,4 +9,4 @@ with its conversion, metadata, parameter and transaction suites retained for Har
 - TLS enabled by default; use `useEncryption=false` explicitly for a plaintext development server.
 
 See README.md for installation and connection strings. Built and tested against released
-Hardcharger 2.0.0, using Warp SQL 1.0.1. Linux libraries are built on Ubuntu 24.04.
+Hardcharger 2.0.0, using Chargewire 1.0.1. Linux libraries are built on Ubuntu 24.04.

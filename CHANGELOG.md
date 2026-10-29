@@ -10,15 +10,15 @@ The first published release. The v1.0.0 candidate was stopped by its signing gat
 - Pin signing automation separately from the released core implementation.
 - Publish the verified Homebrew formula and document macOS 15+ and Linux glibc 2.39+ requirements.
 
-- Thin wrapper around the released generic Warp SQL ODBC driver; add hardcharger:// URIs, port 31337, branding and query/session settings.
+- Thin wrapper around the released generic Chargewire ODBC driver; add hardcharger:// URIs, port 31337, branding and query/session settings.
 
 ### Added
-- Initial Hardcharger ODBC driver with native Warp SQL over HTTP/HTTPS and Arrow IPC streaming.
+- Initial Hardcharger ODBC driver with native Chargewire over HTTP/HTTPS and Arrow IPC streaming.
 - Windows x64 signed DLL and MSI, macOS arm64 and Linux amd64/arm64 libraries.
 - Password, bearer token, browser OAuth and client-certificate authentication.
 - Prepared parameters, catalog/schema/table/column/type metadata, primary and foreign keys,
   transactional commit/rollback, cancellation and server-side statement timeouts.
-- The GizmoSQL ODBC regression suites adapted to Hardcharger, plus native Warp SQL regressions.
+- The GizmoSQL ODBC regression suites adapted to Hardcharger, plus native Chargewire regressions.
 - Hardcharger branding matching the Hardcharger ADBC repository.
 
 ### Fixed
