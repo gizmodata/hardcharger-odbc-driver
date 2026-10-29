@@ -2,8 +2,11 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-10-29
+
 ### Changed
 
+- Built on Chargewire ODBC 2.0.0.
 - The driver now uses the Chargewire protocol and the Chargewire ODBC driver and client
   library. Its registered name, library name, `hardcharger://` URIs and DSNs are
   unchanged, and connection URIs and mount paths written for 1.0 keep working. It still

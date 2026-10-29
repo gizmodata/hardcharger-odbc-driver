@@ -176,7 +176,7 @@ python third_party/chargewire-odbc/scripts/test-live.py --server /path/to/hardch
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). The original ODBC layer is
 copyright Dremio Corporation and GizmoData LLC; the new Chargewire implementation is
-copyright GizmoData LLC. The build pins Chargewire 1.0.1, Arrow 26.0.0, Boost 1.92.0
+copyright GizmoData LLC. The build pins Chargewire ODBC 2.0.0, Arrow 26.0.0, Boost 1.92.0
 (Unix), spdlog 1.17.0 and GoogleTest 1.14.0. The Windows dependency baseline is pinned
 in the CI workflow. See [RELEASING.md](RELEASING.md) for reproducible release and signing steps.
 
