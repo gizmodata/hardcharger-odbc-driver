@@ -5,6 +5,10 @@
 2. Run unit and live suites locally. Push main and require all four platform builds/tests green.
 3. Tag that tested commit `vX.Y.Z` and push the tag. The workflow repeats every gate on
    the tagged commit. It publishes only after signing and verification succeed.
+4. After publication, the *Smoke-test a published release* workflow installs the published
+   Linux x64 and macOS ARM64 packages and runs `scripts/smoke-cloud-host.py` against the public
+   gizmodata.com host. Check it is green; run it by hand (`gh workflow run smoke-release.yml -f
+   tag=vX.Y.Z`) for a tag it did not run on.
 
 Windows signing uses the existing GizmoData EV certificate `ev-codesigning-cert` in
 Azure Key Vault `kv-cs-gizmo-edge-prd`. The private key stays in the vault. The

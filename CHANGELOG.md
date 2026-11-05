@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-11-05
+
+### Fixed
+
+- **A fully qualified host name connects over TLS** (Chargewire ODBC 2.3.1, on the Chargewire
+  C++ client 2.2.2). A host written with a final dot, such as `my-cluster.gizmodata.com.` in a
+  `hardcharger://` URI or the `host` property, failed every connection with "the TLS handshake
+  ... failed: certificate verify failed", because the dotted name was sent as the TLS server
+  name and checked against the certificate. The name without the final dot is used for both.
+  1.4.0 already chose port 443 for such a GizmoData Cloud host.
+
+### Added
+
+- `scripts/smoke-cloud-host.py` checks a driver against the public `gizmodata.com` host: port
+  443 for `gizmodata.com` and `gizmodata.com.` (URI and `host` property), verified TLS, and an
+  explicit port winning. The new *Smoke-test a published release* workflow runs it on the
+  published Linux x64 and macOS ARM64 packages after each release (or by hand for a tag).
+
 ## [1.4.0] - 2026-11-05
 
 ### Changed

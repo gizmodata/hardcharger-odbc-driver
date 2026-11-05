@@ -1,0 +1,60 @@
+name: Smoke-test a published release
+# After a release is published, install its Linux x64 and macOS ARM64 packages and run
+# scripts/smoke-cloud-host.py against the public gizmodata.com host (port 443 for a GizmoData
+# Cloud host, verified TLS with and without a final dot, an explicit port winning).
+on:
+  workflow_run:
+    workflows: ['Build, test and release']
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Published release tag to smoke-test (for example v1.4.1)
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.tag || github.event.workflow_run.head_branch }}
+  cancel-in-progress: false
+jobs:
+  smoke:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' &&
+       startsWith(github.event.workflow_run.head_branch, 'v'))
+    name: Smoke (${{ matrix.platform }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux-amd64
+            runner: ubuntu-24.04
+          - platform: macos-arm64
+            runner: macos-15
+    runs-on: ${{ matrix.runner }}
+    env:
+      TAG: ${{ inputs.tag || github.event.workflow_run.head_branch }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Install unixODBC and pyodbc
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == macOS ]]; then brew install unixodbc; else sudo apt-get update -q && sudo apt-get install -y -q unixodbc; fi
+          python -m pip install pyodbc
+      - name: Download the published package and check it against SHA256SUMS
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir release
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --dir release \
+            --pattern "hardcharger-odbc-${{ matrix.platform }}.tar.gz" --pattern SHA256SUMS
+          (cd release && grep " ./hardcharger-odbc-${{ matrix.platform }}.tar.gz$" SHA256SUMS | shasum -a 256 -c -)
+          mkdir driver && tar -xzf release/hardcharger-odbc-${{ matrix.platform }}.tar.gz -C driver
+          echo "DRIVER=$(find "$PWD/driver/lib" -name 'libhardcharger-odbc.*' -type f | head -1)" >> "$GITHUB_ENV"
+      - name: Smoke-test against gizmodata.com
+        run: python scripts/smoke-cloud-host.py --driver "$DRIVER"
