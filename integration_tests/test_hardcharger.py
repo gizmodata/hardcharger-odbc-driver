@@ -132,8 +132,12 @@ class ResumingServer:
                     except OSError:
                         pass
 
-        threading.Thread(target=relay, args=(upstream, client), daemon=True).start()
+        back = threading.Thread(target=relay, args=(upstream, client), daemon=True)
+        back.start()
         relay(client, upstream)
+        back.join(timeout=30)
+        upstream.close()
+        client.close()
 
 
 class ResumeTimeoutTests(unittest.TestCase):
