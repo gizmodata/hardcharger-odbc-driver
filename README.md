@@ -112,6 +112,10 @@ and primary/imported/exported key metadata.
 ## Connection options
 
 `hardcharger://host` uses verified TLS and port 31337. Add `?tls=false` for plain HTTP.
+A GizmoData Cloud host (`gizmodata.com` or any name under it, such as
+`my-cluster.us-east-1.aws.gizmodata.com`) defaults to port 443 instead, where GizmoData Cloud
+clusters answer: in a `hardcharger://` URI and in a `host` property (DSN or connection string)
+given without a port. An explicit port always wins; every other host defaults to 31337.
 `hardcharger://host:port/custom/chargewire` selects a custom protocol mount. Generic `chargewire://`,
 `https://` and `http://` URIs retain the Chargewire driver's port defaults (443/80).
 Credentials belong in ODBC properties. Explicit properties override URI values.
@@ -123,7 +127,7 @@ Property names are case insensitive.
 |---|---|---|
 | `uri` | | `hardcharger://host[:port]`, `chargewire://`, `https://` or `http://` URI |
 | `host` | `localhost` | Server DNS name or IP address |
-| `port` | `31337` | Chargewire port |
+| `port` | `31337`; `443` for a GizmoData Cloud host | Chargewire port |
 | `uid` / `user` / `user id` | | Username |
 | `pwd` / `password` | | Password |
 | `authType` | `basic` | `basic`/`password`, `token`/`access_token`, `token_exchange`, `external`, or `client_certificate`/`mtls` |

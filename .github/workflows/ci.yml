@@ -17,7 +17,7 @@ permissions:
   attestations: write
 jobs:
   driver:
-    uses: gizmodata/chargewire-odbc/.github/workflows/ci.yml@5886fd5c54f39bb5680edb5063c47aab4a050f69
+    uses: gizmodata/chargewire-odbc/.github/workflows/ci.yml@740911fe40de7cbafbfe1d03eca622fad4d6b4f9
     with:
       platforms: ${{ inputs.platforms || 'all' }}
       source-root: third_party/chargewire-odbc

@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-11-05
+
+### Changed
+
+- **GizmoData Cloud hosts default to port 443.** A host without a port whose name is
+  `gizmodata.com` or ends in `.gizmodata.com` (any case, a trailing dot allowed; matched on the
+  domain boundary, so `evilgizmodata.com` and `gizmodata.com.example.org` don't count) connects
+  on 443, where GizmoData Cloud clusters answer. This applies to a `hardcharger://` URI and to
+  the `host` property of a DSN or connection string. An explicit port always wins, and every
+  other host keeps 31337. It is the same rule as the Hardcharger CLI, web UI and the other
+  Hardcharger drivers.
+- Built on Chargewire ODBC 2.3.0, whose driver profile can choose the default port per host.
+
 ## [1.3.0] - 2026-11-05
 
 ### Added

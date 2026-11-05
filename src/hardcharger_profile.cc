@@ -4,9 +4,22 @@
 #include <boost/algorithm/string.hpp>
 
 namespace driver::chargewire_odbc {
+namespace {
+// gizmodata.com or a name under it, in any case, with an optional trailing dot. The same rule
+// as the Hardcharger CLI's IsGizmoDataCloudHost: GizmoData Cloud clusters answer on 443.
+bool IsGizmoDataCloudHost(std::string host) {
+  boost::algorithm::to_lower(host);
+  if (!host.empty() && host.back() == '.') host.pop_back();
+  constexpr std::string_view kDomain = "gizmodata.com";
+  if (host == kDomain) return true;
+  return host.size() > kDomain.size() + 1 && boost::algorithm::ends_with(host, kDomain) &&
+         host[host.size() - kDomain.size() - 1] == '.';
+}
+int HardchargerDefaultPort(const std::string& host) { return IsGizmoDataCloudHost(host) ? 443 : 31337; }
+}
 const DriverProfile& GetDriverProfile() {
   static const DriverProfile profile{"Hardcharger ODBC Driver", "Hardcharger",
-      "hardcharger-odbc/" CHARGEWIRE_ODBC_VERSION, "hardcharger-odbc.ini", 31337};
+      "hardcharger-odbc/" CHARGEWIRE_ODBC_VERSION, "hardcharger-odbc.ini", 31337, &HardchargerDefaultPort};
   return profile;
 }
 std::string TranslateProductUri(const std::string& raw) {
@@ -18,7 +31,7 @@ std::string TranslateProductUri(const std::string& raw) {
   if (scheme != "hardcharger") return raw;
   boost::urls::url uri(*parsed);
   uri.set_scheme("chargewire");
-  if (!uri.has_port()) uri.set_port("31337");
+  if (!uri.has_port()) uri.set_port(std::to_string(HardchargerDefaultPort(std::string(uri.host()))));
   return uri.buffer();
 }
 void InitializeProductSession(ChargewireClient& client, const ConnectionProperties& properties,
