@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-05
+
 ### Added
 
 - **Connecting to a Hardcharger server that is resuming** (Chargewire ODBC 2.2.0). A server
