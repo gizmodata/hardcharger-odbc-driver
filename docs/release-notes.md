@@ -1,12 +1,14 @@
-The first **Hardcharger™ ODBC driver**, a thin wrapper of the generic [Chargewire ODBC driver](https://github.com/gizmodata/chargewire-odbc). Adds **hardcharger://** URIs (port 31337) and Hardcharger branding/settings, using **Chargewire over HTTP/HTTPS** and
-Apache Arrow IPC streaming. Based on the GizmoSQL driver's ODBC compatibility layer,
-with its conversion, metadata, parameter and transaction suites retained for Hardcharger.
+**Hardcharger™ ODBC Driver 1.2.0**, on [Chargewire ODBC](https://github.com/gizmodata/chargewire-odbc) 2.1.0, for Hardcharger 2.7.0.
 
-- Windows x64: **GizmoData EV-signed DLL and MSI**, verified Authenticode signatures and timestamp.
-- macOS Apple Silicon and Linux x64/ARM64 native libraries.
-- Prepared parameters; catalog, schema, table, column, type, primary-key and foreign-key metadata.
-- Commit/rollback, cancellation, statement timeouts, password, token, browser and certificate sign-in.
-- TLS enabled by default; use `useEncryption=false` explicitly for a plaintext development server.
+- A session Hardcharger ended because its transaction sat idle past
+  `idle_in_transaction_session_timeout` fails the statement with SQLSTATE `40000` and a
+  message naming the reason (`idle_in_transaction`); the driver never runs the statement
+  again on a new session.
+- A connection whose session the server ended or no longer has reports
+  `SQL_ATTR_CONNECTION_DEAD`, so connection pools discard it; a closed or killed session
+  reports `08S01`.
+- Nested schemas (`a.b`) pass through the catalog functions by their path.
 
-See README.md for installation and connection strings. Built and tested against released
-Hardcharger 2.0.0, using Chargewire 1.0.1. Linux libraries are built on Ubuntu 24.04.
+See CHANGELOG.md for details and README.md for installation and connection strings. GizmoData
+EV-signed Windows x64 DLL and MSI; macOS 15+ ARM64 and Linux x64/ARM64 libraries (glibc 2.39
+or later). Built and tested against released Hardcharger 2.7.0, using Chargewire 2.1.0.
