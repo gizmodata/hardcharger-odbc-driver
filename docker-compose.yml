@@ -1,6 +1,6 @@
 services:
   hardcharger:
-    image: ghcr.io/gizmodata/hardcharger:2.0.0
+    image: ghcr.io/gizmodata/hardcharger:2.7.0
     ports:
       - "31337:31337"
     environment:

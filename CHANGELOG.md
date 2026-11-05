@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-04
+
+### Changed
+
+- Built on Chargewire ODBC 2.1.0 (Chargewire 2.1.0), and tested against Hardcharger 2.7.0.
+
+### Fixed
+
+- A session Hardcharger 2.7.0 ended because its transaction sat idle past
+  `idle_in_transaction_session_timeout` (`session_ended`, reason `idle_in_transaction`) now
+  fails the statement with SQLSTATE `40000` (transaction rollback) and a message that names the
+  reason and says the transaction was rolled back; it reported `28000` before. The driver
+  never replaces a lost session or runs a statement again, so nothing commits on its own
+  after the transaction was rolled back.
+- A connection whose session the server no longer has (closed, evicted after idling, the
+  server restarted) or ended now reports `SQL_ATTR_CONNECTION_DEAD`, so connection pools
+  discard it; closed and killed sessions report `08S01` (they reported `HY000` and `28000`).
+  Rolling back the transaction the server already rolled back succeeds.
+
 ## [1.1.0] - 2026-10-29
 
 ### Changed
