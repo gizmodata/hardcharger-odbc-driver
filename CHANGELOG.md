@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-11-05
+
+### Added
+
+- **Connecting to a Hardcharger server that is resuming** (Chargewire ODBC 2.2.0). A server
+  that was stopped and is starting again, such as a GizmoData Cloud cluster stopped while idle,
+  answers `server_resuming` until it serves; the driver waits the time the server asks for and
+  sends the same request again, the sign-in included. The new `ResumeTimeout` property (DSN or
+  connection string, seconds, default `600`, `0` turns the retry off) bounds the wait; after it
+  the connection fails with SQLSTATE `HYT01`. `SQL_ATTR_LOGIN_TIMEOUT` bounds the TCP connection
+  and TLS handshake only, so a sign-in a resuming server holds is still answered.
+
+### Fixed
+
+- `SQLExecDirect` runs Hardcharger's `SET hardcharger.*` and `KILL SESSION`, which can't be
+  prepared (chargewire-odbc#3): without bound parameters it runs the statement directly
+  instead of preparing it first. With bound parameters it now sends them (it ignored them).
+- A statement without rows no longer reports the previous statement's result columns or
+  reads its result, and `SQLFetch`/`SQLGetData`/`SQLCloseCursor` without a result set report
+  `24000` (a driver loaded without a driver manager crashed; `SQLCloseCursor` said `28000`).
+
+### Changed
+
+- Built on Chargewire ODBC 2.2.0, and tested against Hardcharger 2.7.0. Wrapper tests connect
+  through a resuming stand-in server (`ResumeTimeout` waits, `0` and an expired timeout give
+  `HYT01`, invalid values `HY024`).
+
 ## [1.2.0] - 2026-11-04
 
 ### Changed

@@ -140,6 +140,7 @@ Property names are case insensitive.
 | `oauthBrowser` | system browser | Browser executable path, or `none` to print the sign-in URL |
 | `StringColumnLength` | `1024` fallback | Reported variable-length column size |
 | `UseWideChar` | `true` Windows; `false` Unix | Report strings as wide ODBC types |
+| `ResumeTimeout` | `600` | Seconds to keep retrying while a stopped server starts again (it answers `server_resuming`); `0` turns the retry off |
 
 Browser sign-in uses the server's configured OpenID Connect provider:
 `authType=external`. Certificate sign-in uses `authType=client_certificate` together
@@ -150,9 +151,19 @@ the enclosing ODBC braces). In a DSN, use the JSON object directly.
 
 Password and certificate credentials renew automatically through the Chargewire client.
 Browser sessions and externally supplied access tokens require a fresh sign-in when
-they expire. `SQL_ATTR_LOGIN_TIMEOUT` controls connection establishment;
+they expire. `SQL_ATTR_LOGIN_TIMEOUT` bounds the TCP connection and TLS handshake, not the
+sign-in itself: a server that is resuming may hold a sign-in up to 25 s before answering.
 `SQL_ATTR_QUERY_TIMEOUT` sends the server's statement timeout. `SQLCancel` cancels
 work through Chargewire even while `SQLExecute` is waiting for the result.
+
+**A Hardcharger server that was stopped and is starting again** (for example a GizmoData Cloud
+cluster that was stopped while idle and resumes on the first sign-in) answers `server_resuming`
+until it serves. The driver then waits the time the server asks for (at least 1 s, at most 60 s,
+3 s if it names none) and sends the same request again, the sign-in included, for up to
+`ResumeTimeout` seconds, so `SQLConnect`/`SQLDriverConnect` simply takes longer while the server
+starts. If the server is still resuming when `ResumeTimeout` runs out (or at once with
+`ResumeTimeout=0`), the call fails with SQLSTATE `HYT01` and the server's message. A value that
+is not a whole number of seconds from 0 to 86400 is refused with `HY024`.
 
 The driver does not replace a session the server ended or no longer has (an idle session
 evicted, a server restart, `KILL SESSION`, or a transaction left idle past
@@ -183,7 +194,7 @@ python third_party/chargewire-odbc/scripts/test-live.py --server /path/to/hardch
 
 Apache-2.0. See [LICENSE](LICENSE) and [NOTICE](NOTICE). The original ODBC layer is
 copyright Dremio Corporation and GizmoData LLC; the new Chargewire implementation is
-copyright GizmoData LLC. The build pins Chargewire ODBC 2.1.0, Arrow 26.0.0, Boost 1.92.0
+copyright GizmoData LLC. The build pins Chargewire ODBC 2.2.0, Arrow 26.0.0, Boost 1.92.0
 (Unix), spdlog 1.17.0 and GoogleTest 1.14.0. The Windows dependency baseline is pinned
 in the CI workflow. See [RELEASING.md](RELEASING.md) for reproducible release and signing steps.
 

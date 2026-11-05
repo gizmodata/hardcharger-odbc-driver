@@ -1,7 +1,9 @@
 """Thin-wrapper regressions, through the real ODBC driver manager and server."""
 import json
 import os
+import socket
 import sys
+import threading
 import time
 import unittest
 
@@ -47,6 +49,152 @@ class HardchargerTests(unittest.TestCase):
         with self.assertRaises(pyodbc.Error) as error:
             pyodbc.connect(f'Driver={DRIVER};uri=hardcharger+http://{HOST}:{PORT};' + AUTH, timeout=3)
         self.assertIn('?tls=false', str(error.exception))
+
+
+class ResumingServer:
+    """A stand-in for a stopped Hardcharger that is starting again (Chargewire spec §11.2).
+
+    The first `resuming` protocol requests are answered 503 server_resuming with Retry-After,
+    each on its own connection. Discovery and health never answer server_resuming (§11.2), so
+    they, and every request after the first `resuming`, are relayed to the real test server.
+    """
+
+    def __init__(self, resuming, retry_after='1'):
+        self.resuming, self.retry_after, self.answered = resuming, retry_after, 0
+        self.lock = threading.Lock()
+        self.listener = socket.create_server(('127.0.0.1', 0))
+        self.port = self.listener.getsockname()[1]
+        threading.Thread(target=self.serve, daemon=True).start()
+
+    def close(self):
+        self.listener.close()
+
+    def serve(self):
+        while True:
+            try:
+                client, _ = self.listener.accept()
+            except OSError:
+                return
+            threading.Thread(target=self.handle, args=(client,), daemon=True).start()
+
+    @staticmethod
+    def read_request(client):
+        """The request's bytes (head and body), or None when the client closed first."""
+        request = b''
+        while b'\r\n\r\n' not in request:
+            chunk = client.recv(65536)
+            if not chunk:
+                return None
+            request += chunk
+        head, _, body = request.partition(b'\r\n\r\n')
+        length = next((int(line.split(b':', 1)[1]) for line in head.split(b'\r\n')
+                       if line.lower().startswith(b'content-length:')), 0)
+        while len(body) < length:
+            chunk = client.recv(65536)
+            if not chunk:
+                break
+            body += chunk
+        return head + b'\r\n\r\n' + body
+
+    def handle(self, client):
+        request = self.read_request(client)
+        if request is None:
+            client.close()
+            return
+        method, target = request.split(b' ', 2)[:2]
+        always_served = method == b'GET' and target.split(b'?')[0].rstrip(b'/') in (b'/chargewire', b'/warp', b'/health')
+        with self.lock:
+            resuming = not always_served and self.answered < self.resuming
+            self.answered += resuming
+        if resuming:
+            with client:
+                problem = json.dumps({'type': 'urn:chargewire:error:server_resuming', 'title': 'Server resuming',
+                                      'status': 503, 'code': 'server_resuming',
+                                      'detail': f'the server is resuming; retry after {self.retry_after} s'}).encode()
+                client.sendall(b'HTTP/1.1 503 Service Unavailable\r\nContent-Type: application/problem+json\r\n'
+                               b'Retry-After: ' + self.retry_after.encode() + b'\r\nConnection: close\r\n'
+                               b'Content-Length: ' + str(len(problem)).encode() + b'\r\n\r\n' + problem)
+            return
+        # Relay this connection to the real server from here on (keep-alive requests included).
+        upstream = socket.create_connection((HOST, int(PORT)))
+        upstream.sendall(request)
+
+        def relay(source, target):
+            try:
+                while chunk := source.recv(65536):
+                    target.sendall(chunk)
+            except OSError:
+                pass
+            finally:
+                for end in (source, target):
+                    try:
+                        end.shutdown(socket.SHUT_RDWR)
+                    except OSError:
+                        pass
+
+        back = threading.Thread(target=relay, args=(upstream, client), daemon=True)
+        back.start()
+        relay(client, upstream)
+        back.join(timeout=30)
+        upstream.close()
+        client.close()
+
+
+class ResumeTimeoutTests(unittest.TestCase):
+    # The stand-in answers plain HTTP; the TLS run covers everything else.
+    def connect(self, server, resume_timeout):
+        options = f'Driver={DRIVER};uri=hardcharger://127.0.0.1:{server.port}?tls=false;ResumeTimeout={resume_timeout};'
+        return pyodbc.connect(options + AUTH, autocommit=True, timeout=10)
+
+    def test_waits_for_a_resuming_server(self):
+        if TLS == 'true':
+            return
+        server = ResumingServer(resuming=2)
+        try:
+            started = time.monotonic()
+            with self.connect(server, 30) as c:
+                self.assertEqual(c.execute('SELECT 31').fetchval(), 31)
+            self.assertEqual(server.answered, 2)
+            self.assertGreaterEqual(time.monotonic() - started, 1.9)  # Retry-After: 1, twice
+        finally:
+            server.close()
+
+    def test_zero_turns_the_retry_off(self):
+        if TLS == 'true':
+            return
+        server = ResumingServer(resuming=1000)
+        try:
+            with self.assertRaises(pyodbc.Error) as error:
+                self.connect(server, 0)
+            self.assertEqual(error.exception.args[0], 'HYT01', error.exception.args[1])
+            self.assertIn('resuming', error.exception.args[1])
+            self.assertEqual(server.answered, 1)  # one sign-in attempt, no retry
+        finally:
+            server.close()
+
+    def test_timeout_runs_out(self):
+        if TLS == 'true':
+            return
+        server = ResumingServer(resuming=1000)
+        try:
+            started = time.monotonic()
+            with self.assertRaises(pyodbc.Error) as error:
+                self.connect(server, 3)
+            elapsed = time.monotonic() - started
+            self.assertEqual(error.exception.args[0], 'HYT01', error.exception.args[1])
+            self.assertGreaterEqual(server.answered, 2)
+            self.assertGreaterEqual(elapsed, 1.9)
+            self.assertLess(elapsed, 30)
+        finally:
+            server.close()
+
+    def test_invalid_value_is_refused(self):
+        for value in ('abc', '-1', '86401', '1.5'):
+            with self.subTest(value=value), self.assertRaises(pyodbc.Error) as error:
+                pyodbc.connect(BASE + AUTH + f'ResumeTimeout={value};', timeout=5)
+            self.assertEqual(error.exception.args[0], 'HY024', error.exception.args[1])
+        with connect('ResumeTimeout=0;') as c:  # the positive twin: a running server, no retry needed
+            self.assertEqual(c.execute('SELECT 32').fetchval(), 32)
 
 
 # A Hardcharger released before the protocol's rename, over plain HTTP, as host:port. When it
