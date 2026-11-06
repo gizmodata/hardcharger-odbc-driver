@@ -2,6 +2,12 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-11-06
+
+### Changed
+
+- Build on Chargewire ODBC 2.3.2 and Chargewire C++ 2.3.0 for reusable HTTP connections and efficient Arrow stream reads. Hardcharger URI defaults, Cloud port selection and the ODBC API are unchanged.
+
 ## [1.4.1] - 2026-11-05
 
 ### Fixed
