@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-11-07
+
+On Chargewire ODBC 2.4.0 (Chargewire C++ 2.4.1).
+
+### Added
+
+- **Connecting to a stopped GizmoData Cloud cluster doesn't start it** (Chargewire §11.2, lazy connect). When the
+  cluster is stopped with auto-resume on, `SQLDriverConnect` returns without signing in; connection checks
+  (`SQL_ATTR_CONNECTION_DEAD`, which driver-manager pools use), `SQLGetInfo`, autocommit changes, `SQLEndTran` and
+  `SQLDisconnect` send nothing. The first statement or catalog function signs in, which starts the cluster, and the
+  `queryTag`/`sessionTag` settings go on the session just before it. BI tools and pools that open and check
+  connections no longer wake a stopped cluster; a query still does.
+
+### Fixed
+
+- A connection whose token was refused for good (`token_revoked`, `credentials_changed`, `principal_dropped`)
+  reports itself dead, so a pool replaces it instead of reusing it.
+- `SQLCancel` on a running statement and closing a partly read result never sign in (2.4.0 covered disconnects).
+
 ## [1.4.3] - 2026-11-06
 
 ### Fixed
