@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-11-06
+
+### Fixed
+
+- **Disconnecting never signs in.** On Chargewire ODBC 2.3.3: an `SQLDisconnect` (or freeing a statement) late
+  in a token's life used to sign in again just to close, which started a stopped GizmoData Cloud cluster with
+  auto-resume for nobody, or undid a person's Stop, and could wait for the resume. Disconnects now use the token the
+  connection already has and wait at most a few seconds; requests that do work renew the token as before.
+
 ## [1.4.2] - 2026-11-06
 
 ### Changed
