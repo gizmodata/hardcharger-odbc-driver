@@ -109,6 +109,28 @@ rolls it back. The driver also supports the ODBC C API, DSNs, row binding,
 `SQLGetData`, prepared parameters, catalog/schema/table/column discovery, type info,
 and primary/imported/exported key metadata.
 
+## Read-only connections
+
+Add `ReadOnly=true` to the connection string to require a server-enforced read-only session.
+ODBC applications can instead set `SQL_ATTR_ACCESS_MODE` to `SQL_MODE_READ_ONLY` before
+connecting, or enable it on an existing connection:
+
+```python
+import pyodbc
+
+with pyodbc.connect(connection_string + ";ReadOnly=true", autocommit=True) as conn:
+    print(conn.execute("SELECT 42 AS answer").fetchval())  # 42
+```
+
+Here `connection_string` contains your Hardcharger driver and connection details. The
+server must confirm the restriction before session tags or other setup runs. Lazy
+connections confirm on their first operation, including reading the access-mode attribute.
+The restriction is one-way; open another connection to write. An older server that rejects
+or ignores the option causes an error, never a writable fallback. Ordinary connections
+keep their existing behavior. Refused writes report SQLSTATE `25006`. This driver does not
+automatically replace lost sessions. Read-only adds no permissions and does not sandbox
+administrator-installed extension code.
+
 ## Connection options
 
 `hardcharger://host` uses verified TLS and port 31337. Add `?tls=false` for plain HTTP.
