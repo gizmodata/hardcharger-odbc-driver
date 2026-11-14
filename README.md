@@ -201,7 +201,9 @@ otherwise reports `08S01`.
 ## Build and test
 
 See [BUILDING.md](docs/BUILDING.md). The release workflow builds and tests Linux
-amd64/arm64, macOS arm64 and Windows amd64 against released Hardcharger 2.7.0.
+amd64/arm64, macOS arm64 and Windows amd64 against Hardcharger 2.13.0, using its
+published release or verified artifacts from a successful main workflow while the release
+is pending. Both the shared core and Hardcharger wrapper suites run, including read-only cases.
 Tests require a real server; missing binaries or failed live suites fail the build.
 
 ```sh

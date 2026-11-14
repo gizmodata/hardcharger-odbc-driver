@@ -1,10 +1,7 @@
-**Hardcharger™ ODBC Driver 1.5.0**, on Chargewire ODBC 2.4.0 and Chargewire C++ 2.4.1.
+**Hardcharger™ ODBC Driver 1.6.0**, built on Chargewire ODBC 2.5.0 and Chargewire C++ SDK 2.5.0.
 
-- **Connecting to a stopped GizmoData Cloud cluster doesn't start it.** With auto-resume on, the driver connects
-  without signing in; connection checks, `SQLGetInfo`, autocommit changes and disconnects send nothing, and the
-  first statement signs in (starting the cluster), with `queryTag`/`sessionTag` applied just before it. BI tools
-  and connection pools no longer wake a stopped cluster; a query still does.
-- A connection whose token was refused for good reports itself dead, so pools replace it.
-- `SQLCancel` and closing a partly read result never sign in.
+- `ReadOnly=true` opens a server-confirmed read-only session. `SQL_ATTR_ACCESS_MODE=SQL_MODE_READ_ONLY` can also restrict a connection; the restriction is one-way.
+- Unsupported or ignored read-only requests fail instead of silently opening a writable connection. Read-only mode requires Hardcharger 2.13.0 or newer; ordinary connections retain existing older-server compatibility.
+- Hardcharger session settings and tags are applied correctly when a session starts read-only. Read-write connections remain available by default.
 
-The release gates test against released Hardcharger 2.7.0 on all four platforms over HTTP and verified TLS. Windows DLL and MSI are EV-signed and verified before publication.
+Release gates run the shared core and Hardcharger wrapper suites on all four platforms over HTTP and verified TLS. They use Hardcharger 2.13.0 from its published release, or verified artifacts from a successful main workflow while that release is pending. Windows DLLs and MSIs are EV-signed, signature-verified and installed-driver tested before publication.
