@@ -12,6 +12,15 @@ sys.path.insert(0, os.path.join(os.environ['ODBC_SUITE_ROOT'], 'integration_test
 from test_chargewire import AUTH, BASE, CA, DRIVER, HOST, PORT, TLS, connect, pyodbc
 
 class HardchargerTests(unittest.TestCase):
+    def test_read_only_with_product_session_setup(self):
+        with connect('ReadOnly=true;sessionTag={{"app":"readonly-wrapper"}}};') as c:
+            self.assertEqual(c.execute('SELECT 42').fetchval(), 42)
+            tag = c.execute("SELECT value FROM hardcharger_settings() WHERE name = 'hardcharger.session_tag'").fetchval()
+            self.assertEqual(json.loads(tag)['app'], 'readonly-wrapper')
+            with self.assertRaises(pyodbc.Error) as error:
+                c.execute('CREATE TABLE wrapper_readonly_write (n INTEGER)')
+            self.assertEqual(error.exception.args[0], '25006')
+
     def test_hardcharger_uri(self):
         uri = f'hardcharger://{HOST}:{PORT}' + ('?tls=false' if TLS != 'true' else '')
         options = f'Driver={DRIVER};uri={uri};' + AUTH

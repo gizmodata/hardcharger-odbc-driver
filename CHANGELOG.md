@@ -2,6 +2,15 @@
 
 ## [Unreleased]
 
+## [1.6.0] - 2026-11-14
+
+On published Chargewire ODBC 2.5.0 (Chargewire C++ SDK 2.5.0).
+
+### Added
+
+- Server-confirmed read-only connections through the Chargewire driver, with one-way
+  transitions and no writable fallback when the server does not support the option.
+
 ## [1.5.0] - 2026-11-07
 
 On Chargewire ODBC 2.4.0 (Chargewire C++ 2.4.1).

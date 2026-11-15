@@ -2,8 +2,10 @@
 
 1. Publish and verify the pinned generic Chargewire ODBC release first. Then update `project(... VERSION ...)` in CMakeLists.txt, CHANGELOG.md and the expected
    driver version in the regression suite. DLL resource and MSI versions derive from CMake.
-2. Run unit and live suites locally. Push main and require all four platform builds/tests green.
-3. Tag that tested commit `vX.Y.Z` and push the tag. The workflow repeats every gate on
+2. Run the shared and wrapper unit/live suites locally. Push a release branch, open a pull
+   request and require all four platform builds/tests green before merging through the PR.
+3. Fetch the exact landed main commit and verify its tree matches the tested candidate.
+   Create an annotated `vX.Y.Z` tag on that commit and push the tag. The workflow repeats every gate on
    the tagged commit. It publishes only after signing and verification succeed.
 4. After publication, the *Smoke-test a published release* workflow installs the published
    Linux x64 and macOS ARM64 packages and runs `scripts/smoke-cloud-host.py` against the public
