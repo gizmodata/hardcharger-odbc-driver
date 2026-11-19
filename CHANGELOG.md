@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-11-19
+
+On published Chargewire ODBC 2.5.1 (Chargewire C++ SDK 2.5.0).
+
 ### Fixed
 
 - **Power BI and Excel's Navigator lists the tables in a catalog** (#6). Power Query discovers tables with
