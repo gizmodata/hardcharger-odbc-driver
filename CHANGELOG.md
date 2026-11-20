@@ -2,6 +2,18 @@
 
 ## [Unreleased]
 
+## [1.6.1] - 2026-11-19
+
+On published Chargewire ODBC 2.5.1 (Chargewire C++ SDK 2.5.0).
+
+### Fixed
+
+- **Power BI and Excel's Navigator lists the tables in a catalog** (#6). Power Query discovers tables with
+  `SQLTables("%", NULL, NULL, "TABLE,VIEW")`. ODBC 3 makes that catalog a search pattern, but the driver sent the
+  `%` to the server as a catalog name, so it returned no tables. The catalog is now matched as a pattern (`%`,
+  `_` and `\` escapes, case-sensitive), so `%` lists every catalog's tables. Comes from the Chargewire ODBC fix
+  (gizmodata/chargewire-odbc#12).
+
 ## [1.6.0] - 2026-11-14
 
 On published Chargewire ODBC 2.5.0 (Chargewire C++ SDK 2.5.0).
